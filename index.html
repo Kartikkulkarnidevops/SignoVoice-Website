@@ -1,0 +1,1738 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SignoVoice - Learn & Translate</title>
+
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+
+    <style>
+        :root {
+            --primary-color: #6366f1;
+            --primary-dark: #4338ca;
+            --secondary-color: #ec4899;
+            --accent-color: #10b981;
+
+            /* Light Mode Default Colors */
+            --dark-bg: #0f172a;
+            --light-bg: #f8fafc;
+            --card-bg: #ffffff;
+            --text-dark: #1e293b;
+            --text-light: #64748b;
+
+            --gradient-main: linear-gradient(135deg, #6366f1 0%, #a855f7 50%, #ec4899 100%);
+            --shadow-sm: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            --shadow-glow: 0 0 20px rgba(99, 102, 241, 0.3);
+        }
+
+        /* Dark Mode Overrides */
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --text-dark: #f1f5f9;
+                --text-light: #94a3b8;
+                --light-bg: #0f172a;
+                --card-bg: #1e293b;
+                --dark-bg: #020617;
+            }
+
+            .navbar {
+                background: rgba(15, 23, 42, 0.9) !important;
+                border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            }
+
+            .form-control {
+                background-color: #334155 !important;
+                border-color: #475569 !important;
+                color: #f1f5f9 !important;
+            }
+
+            .form-control::placeholder {
+                color: #94a3b8 !important;
+            }
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            line-height: 1.7;
+            color: var(--text-dark);
+            background-color: var(--light-bg);
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        /* --- Dynamic Background Utilities --- */
+        .bg-base {
+            background-color: var(--light-bg) !important;
+        }
+
+        .bg-surface {
+            background-color: var(--card-bg) !important;
+        }
+
+        .text-body-dynamic {
+            color: var(--text-dark) !important;
+        }
+
+        .text-muted-dynamic {
+            color: var(--text-light) !important;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--light-bg);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(to bottom, var(--primary-color), var(--secondary-color));
+            border-radius: 5px;
+        }
+
+        /* Hero Section */
+        .hero-section {
+            background: var(--dark-bg);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+            padding-top: 100px;
+            padding-bottom: 60px;
+        }
+
+        .hero-section::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle at center, rgba(99, 102, 241, 0.2) 0%, transparent 50%), radial-gradient(circle at 80% 20%, rgba(236, 72, 153, 0.2) 0%, transparent 40%);
+            animation: pulse-glow 10s ease-in-out infinite alternate;
+            z-index: 1;
+        }
+
+        @keyframes pulse-glow {
+            0% {
+                transform: scale(1);
+                opacity: 0.5;
+            }
+
+            100% {
+                transform: scale(1.1);
+                opacity: 0.8;
+            }
+        }
+
+        /* Navbar */
+        .navbar {
+            backdrop-filter: blur(12px);
+            background: rgba(255, 255, 255, 0.85);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+            padding: 15px 0;
+        }
+
+        .navbar.scrolled {
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+            padding: 10px 0;
+        }
+
+        .navbar-brand {
+            font-weight: 800;
+            font-size: 1.6rem;
+            background: var(--gradient-main);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .nav-link {
+            font-weight: 600;
+            color: var(--text-dark) !important;
+            margin: 0 10px;
+            position: relative;
+        }
+
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 3px;
+            bottom: -5px;
+            left: 0;
+            background: var(--gradient-main);
+            transition: width 0.3s ease;
+            border-radius: 2px;
+        }
+
+        .nav-link:hover::after {
+            width: 100%;
+        }
+
+        /* Hero Content */
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            color: white;
+        }
+
+        .hero-title {
+            font-size: 4rem;
+            font-weight: 800;
+            margin-bottom: 1.5rem;
+            line-height: 1.1;
+            background: linear-gradient(to right, #fff, #a5b4fc);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: slideInUp 0.8s ease-out;
+        }
+
+        .hero-subtitle {
+            font-size: 1.35rem;
+            color: #cbd5e1;
+            margin-bottom: 2.5rem;
+            font-weight: 300;
+            animation: slideInUp 0.8s ease-out 0.2s both;
+        }
+
+        /* Version Badge */
+        .version-badge {
+            display: inline-block;
+            background: white;
+            color: var(--primary-color);
+            border-radius: 50px;
+            padding: 8px 20px;
+            margin-bottom: 1rem;
+            font-weight: 700;
+            font-size: 0.9rem;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Buttons */
+        .btn-primary-custom {
+            background: var(--gradient-main);
+            border: none;
+            color: white;
+            padding: 14px 35px;
+            border-radius: 50px;
+            font-weight: 700;
+            transition: all 0.3s ease;
+            box-shadow: var(--shadow-glow);
+        }
+
+        .btn-primary-custom:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 0 30px rgba(99, 102, 241, 0.6);
+            color: white;
+        }
+
+        .btn-outline-custom {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 14px 35px;
+            border-radius: 50px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .btn-outline-custom:hover {
+            background: white;
+            color: var(--primary-dark);
+            transform: translateY(-3px);
+        }
+
+        /* Feature Cards */
+        .feature-card {
+            background: var(--card-bg);
+            border-radius: 24px;
+            padding: 2.5rem;
+            box-shadow: var(--shadow-sm);
+            transition: all 0.4s;
+            border: 1px solid rgba(0, 0, 0, 0.03);
+            height: 100%;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .feature-icon {
+            width: 70px;
+            height: 70px;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            margin: 0 auto 1.5rem;
+            background: rgba(99, 102, 241, 0.1);
+            color: var(--primary-color);
+            transition: all 0.3s ease;
+        }
+
+        .feature-card:hover .feature-icon {
+            background: var(--gradient-main);
+            color: white;
+            transform: rotateY(180deg);
+        }
+
+        .feature-title {
+            font-size: 1.4rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: var(--text-dark);
+            text-align: center;
+        }
+
+        .feature-description {
+            color: var(--text-light);
+            text-align: center;
+            font-size: 1rem;
+        }
+
+        .section-title {
+            font-size: 2.5rem;
+            font-weight: 800;
+            text-align: center;
+            margin-bottom: 1rem;
+            background: var(--gradient-main);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: inline-block;
+        }
+
+        .section-subtitle {
+            text-align: center;
+            color: var(--text-light);
+            margin-bottom: 4rem;
+            font-size: 1.2rem;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        /* --- VIDEO & GAME UI --- */
+        .video-container {
+            border-radius: 24px;
+            overflow: hidden;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            border: 4px solid var(--card-bg);
+            background: black;
+            position: relative;
+            min-height: 400px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #webcam-container canvas,
+        #webcam-container video {
+            width: 100% !important;
+            height: 100% !important;
+            object-fit: cover;
+            transform: scaleX(-1);
+        }
+
+        /* Confidence Bar Overlay */
+        .confidence-overlay {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            right: 20px;
+            z-index: 5;
+            background: rgba(0, 0, 0, 0.6);
+            padding: 10px;
+            border-radius: 12px;
+            backdrop-filter: blur(4px);
+        }
+
+        .confidence-label {
+            color: white;
+            font-size: 0.8rem;
+            margin-bottom: 5px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .progress {
+            height: 8px;
+            background-color: rgba(255, 255, 255, 0.2);
+            border-radius: 4px;
+        }
+
+        .progress-bar {
+            background: var(--gradient-main);
+            transition: width 0.1s linear;
+        }
+
+        /* Game Overlay Styles */
+        .game-overlay {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            right: 20px;
+            display: flex;
+            justify-content: space-between;
+            z-index: 5;
+            pointer-events: none;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .score-badge,
+        .target-badge {
+            background: rgba(15, 23, 42, 0.85);
+            backdrop-filter: blur(8px);
+            padding: 10px 20px;
+            border-radius: 50px;
+            color: white;
+            font-weight: 700;
+            font-size: 1.1rem;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .feedback-overlay {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(16, 185, 129, 0.9);
+            color: white;
+            padding: 15px 30px;
+            border-radius: 20px;
+            font-size: 1.5rem;
+            font-weight: 800;
+            opacity: 0;
+            transition: all 0.3s ease;
+            z-index: 6;
+            pointer-events: none;
+        }
+
+        .feedback-overlay.show {
+            opacity: 1;
+            transform: translate(-50%, -60%);
+        }
+
+        /* Mode Switcher */
+        .mode-switcher {
+            background: var(--card-bg);
+            padding: 8px;
+            border-radius: 50px;
+            display: inline-flex;
+            box-shadow: var(--shadow-sm);
+            margin-bottom: 20px;
+            border: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .mode-btn {
+            border: none;
+            background: transparent;
+            padding: 8px 24px;
+            border-radius: 40px;
+            font-weight: 600;
+            color: var(--text-light);
+            transition: all 0.3s;
+        }
+
+        .mode-btn.active {
+            background: var(--gradient-main);
+            color: white;
+            box-shadow: var(--shadow-glow);
+        }
+
+        /* Chat */
+        .interpretation-chat-container {
+            border-radius: 24px;
+            box-shadow: var(--shadow-lg);
+            background: var(--card-bg);
+            overflow: hidden;
+        }
+
+        .interpretation-chat-history {
+            background-color: var(--light-bg);
+            padding: 1.5rem;
+        }
+
+        .interpretation-chat-message {
+            max-width: 85%;
+            padding: 12px 18px;
+            border-radius: 18px;
+            margin-bottom: 12px;
+            font-size: 0.95rem;
+            position: relative;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+        }
+
+        .interpretation-chat-message.ai {
+            background-color: var(--card-bg);
+            color: var(--text-dark);
+            border-bottom-left-radius: 4px;
+            margin-right: auto;
+            border: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        .interpretation-chat-message.user {
+            background: var(--gradient-main);
+            color: white;
+            border-bottom-right-radius: 4px;
+            margin-left: auto;
+            text-align: right;
+        }
+
+        .interpretation-chat-input {
+            background: var(--card-bg);
+            padding: 1rem;
+            border-top: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        /* Interactive */
+        .interactive-card {
+            background: var(--card-bg);
+            border-radius: 24px;
+            padding: 2.5rem;
+            box-shadow: var(--shadow-lg);
+            border: 1px solid rgba(0, 0, 0, 0.05);
+            height: 100%;
+        }
+
+        .interactive-output,
+        .speech-to-sign-animation {
+            background: var(--light-bg);
+            border-radius: 16px;
+            border: 2px dashed #cbd5e1;
+            transition: all 0.3s ease;
+            color: var(--text-dark);
+        }
+
+        .interactive-output.speaking {
+            background: #e0e7ff;
+            border-color: var(--primary-color);
+            border-style: solid;
+            color: #1e293b;
+        }
+
+        /* Stats & Footer */
+        .stats-section {
+            background: var(--dark-bg);
+            position: relative;
+        }
+
+        .stat-number {
+            font-size: 3.5rem;
+            font-weight: 800;
+            background: var(--gradient-main);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .cta-section {
+            background: var(--gradient-main);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .platform-icons {
+            font-size: 1.2rem;
+            vertical-align: middle;
+            margin-left: 8px;
+        }
+
+        .app-store-btn img {
+            height: 55px;
+            border-radius: 8px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .card {
+            border: none;
+            border-radius: 24px;
+            box-shadow: var(--shadow-lg);
+            background: var(--card-bg);
+        }
+
+        .form-control {
+            border-radius: 12px;
+            padding: 12px 15px;
+            border: 1px solid #e2e8f0;
+            background-color: #f8fafc;
+        }
+
+        .form-control:focus {
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+            border-color: var(--primary-color);
+            background-color: white;
+        }
+
+        .btn-primary-form {
+            background: var(--primary-dark);
+            width: 100%;
+            border-radius: 12px;
+            padding: 14px;
+            font-weight: 600;
+        }
+
+        .footer {
+            background: #0f172a;
+            padding-top: 5rem;
+            padding-bottom: 2rem;
+        }
+
+        .footer-link {
+            opacity: 0.7;
+            font-size: 0.95rem;
+            text-decoration: none;
+            color: white;
+        }
+
+        .footer-link:hover {
+            opacity: 1;
+            color: var(--secondary-color);
+            padding-left: 5px;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .fade-in {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s cubic-bezier(0.165, 0.84, 0.44, 1);
+        }
+
+
+         .demo-video {
+        min-height: 680px;
+        padding: 40px 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #10152d;
+    }
+
+    /* Background image */
+    .demo-background {
+        inset: 0;
+        background: url('https://images.unsplash.com/photo-1555421689-491a97ff2040?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80')
+            center / cover no-repeat;
+        opacity: 0.25;
+        pointer-events: none;
+    }
+
+    /* Portrait phone frame */
+    .phone-frame {
+        width: 280px;
+        height: 600px;
+        max-width: 100%;
+        background: #000;
+        border: 6px solid #292929;
+        border-radius: 32px;
+        overflow: hidden;
+        box-shadow: 0 12px 40px rgba(0, 0, 0, 0.6);
+    }
+
+    /* Actual video */
+    .phone-frame video {
+        width: 100%;
+        height: 100%;
+        display: block;
+        object-fit: contain;
+        background: #000;
+    }
+
+    /* Responsive phone size */
+    @media (max-width: 576px) {
+        .demo-video {
+            min-height: 560px;
+            padding: 25px 10px;
+        }
+
+        .phone-frame {
+            width: 240px;
+            height: 515px;
+            border-radius: 28px;
+        }
+    }
+
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Custom Modal Styling - Dark Theme */
+        .modal-content {
+            background-color: #1e293b;
+            color: #f8fafc;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .modal-header {
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .modal-footer {
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .btn-close {
+            filter: invert(1) grayscale(100%) brightness(200%);
+        }
+
+        /* ========== MOBILE RESPONSIVE STYLES ========== */
+        @media (max-width: 768px) {
+            .hero-section {
+                min-height: auto;
+                padding: 100px 0 60px;
+            }
+
+            .hero-title {
+                font-size: 2.2rem;
+                line-height: 1.2;
+                margin-bottom: 1rem;
+            }
+
+            .hero-subtitle {
+                font-size: 1rem;
+                margin-bottom: 1.5rem;
+            }
+
+            .version-badge {
+                font-size: 0.8rem;
+                padding: 6px 16px;
+            }
+
+            .navbar-brand {
+                font-size: 1.3rem;
+            }
+
+            .feature-card {
+                padding: 1.5rem;
+                margin-bottom: 1rem;
+            }
+
+            .section-title {
+                font-size: 1.8rem;
+            }
+
+            .section-subtitle {
+                font-size: 1rem;
+                margin-bottom: 2rem;
+            }
+
+            .btn-primary-custom,
+            .btn-outline-custom {
+                padding: 12px 24px;
+                font-size: 0.9rem;
+            }
+
+            .video-container {
+                min-height: 300px;
+            }
+
+            .game-overlay {
+                flex-direction: column;
+                gap: 5px;
+            }
+
+            .score-badge,
+            .target-badge {
+                font-size: 0.9rem;
+                padding: 8px 16px;
+                width: 100%;
+                text-align: center;
+            }
+
+            .feedback-overlay {
+                font-size: 1.2rem;
+                padding: 12px 24px;
+            }
+
+            .mode-switcher {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .mode-btn {
+                padding: 8px 16px;
+                font-size: 0.85rem;
+                flex: 1;
+            }
+
+            .interpretation-chat-history {
+                height: 250px !important;
+            }
+
+            .interactive-card {
+                padding: 1.5rem;
+            }
+
+            .stat-number {
+                font-size: 2.5rem;
+            }
+
+            /* Stack buttons vertically on mobile */
+            .d-flex.gap-3.flex-wrap {
+                flex-direction: column !important;
+            }
+
+            .d-flex.gap-2 {
+                width: 100%;
+            }
+
+            .d-flex.gap-2 button {
+                flex: 1;
+            }
+
+            /* Mobile control adjustments */
+            .d-flex.align-items-center label {
+                font-size: 0.8rem;
+            }
+
+            #speechSpeed {
+                width: 80px !important;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .hero-title {
+                font-size: 1.8rem;
+            }
+
+            .hero-subtitle {
+                font-size: 0.9rem;
+            }
+
+            .container {
+                padding-left: 15px;
+                padding-right: 15px;
+            }
+
+            .confidence-overlay {
+                left: 10px;
+                right: 10px;
+                bottom: 10px;
+                padding: 8px;
+            }
+
+            .confidence-label {
+                font-size: 0.7rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="modal fade" id="placeholderModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 shadow-lg rounded-4">
+                <div class="modal-header border-0">
+                    <h5 class="modal-title fw-bold" id="modalTitle"></h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body fs-5 text-center py-4" id="modalBody"></div>
+                <div class="modal-footer border-0 justify-content-center">
+                    <button type="button" class="btn btn-secondary rounded-pill px-4"
+                        data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <nav class="navbar navbar-expand-lg navbar-light fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="#home"><i class="fas fa-hands-asl-interpreting me-2"></i>SignoVoice</a>
+            <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse"
+                data-bs-target="#navbarNav"><span class="navbar-toggler-icon"></span></button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto align-items-center">
+                    <li class="nav-item"><a class="nav-link" href="#home">Home</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#features">Features</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#interactive-demo">Demo</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#live-interpretation">Live Cam</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#booking-section">Interpreter</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#download">App</a></li>
+                    <li class="nav-item ms-lg-2"><a class="btn btn-primary-custom btn-sm px-4 py-2"
+                            href="#contact-form-section">Contact</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <section id="home" class="hero-section">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-6">
+                    <div class="hero-content">
+                        <span class="version-badge">
+                            <i class="fas fa-sparkles me-2"></i>v2.0 Now Available
+                        </span>
+                        <h1 class="hero-title">Breaking Communication Barriers</h1>
+                        <p class="hero-subtitle">SignoVoice bridges the gap between sign language and spoken
+                            communication using advanced AI, creating an inclusive world where everyone can connect
+                            seamlessly.</p>
+                        <div class="d-flex flex-wrap gap-3">
+                            <a href="https://play.google.com/store/apps/details?id=com.anirudhzalki.signovoice"
+                               target="_blank"
+                               class="btn btn-primary-custom btn-lg">
+                                <i class="fas fa-download me-2"></i>Download Now
+                            </a>
+
+                            <button class="btn btn-outline-custom btn-lg" id="watchDemoBtn"
+                                    data-bs-toggle="modal" data-bs-target="#demoModal">
+                                <i class="fas fa-play me-2"></i>Watch Demo
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6 mt-5 mt-lg-0">
+                <div class="text-center">
+                    <div class="rounded-4 overflow-hidden" style="z-index: 10;">
+                            <video width="100%" height="100%" controls loop playsinline preload="auto"
+                                style="aspect-ratio: 16/9; object-fit: cover; display: block;">
+                                <source src="sign_videos/preview.mp4" type="video/mp4">
+                                Your browser does not support the video tag.
+                            </video>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="features" class="py-5 bg-base">
+        <div class="container py-5">
+            <div class="row justify-content-center">
+                <div class="col-lg-8">
+                    <div class="text-center mb-5">
+                        <h2 class="section-title fade-in">Powerful Features</h2>
+                        <p class="section-subtitle fade-in">Advanced technology that makes communication accessible for
+                            everyone, powered by state-of-the-art Machine Learning.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="row g-4">
+                <div class="col-lg-4 col-md-6">
+                    <div class="feature-card fade-in">
+                        <div class="feature-icon"><i class="fas fa-hand-paper"></i></div>
+                        <h3 class="feature-title">Sign to Speech</h3>
+                        <p class="feature-description">Our AI-powered system recognizes sign language gestures in
+                            real-time and converts them to clear, natural speech.</p>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6">
+                    <div class="feature-card fade-in">
+                        <div class="feature-icon"><i class="fas fa-brain"></i></div>
+                        <h3 class="feature-title">Practice Mode</h3>
+                        <p class="feature-description">Gamified learning system that awards points when you perform
+                            correct signs, helping you master ASL/ISL.</p>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6">
+                    <div class="feature-card fade-in">
+                        <div class="feature-icon"><i class="fas fa-earth-americas"></i></div>
+                        <h3 class="feature-title">Universal Access</h3>
+                        <p class="feature-description">Support for multiple sign languages (ASL, BSL, ISL) and dialects,
+                            making communication possible globally.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="interactive-demo" class="interactive-demo-section py-5 bg-base">
+        <div class="container py-5">
+            <div class="row justify-content-center">
+                <div class="col-lg-8">
+                    <div class="text-center mb-5">
+                        <h2 class="section-title fade-in">Try SignoVoice Interactively</h2>
+                        <p class="section-subtitle fade-in">Experience basic SignoVoice concepts directly in your
+                            browser (Simulation).</p>
+                    </div>
+                </div>
+            </div>
+            <div class="row g-4">
+                <div class="col-md-6">
+                    <div class="interactive-card fade-in">
+                        <h4><i class="fas fa-volume-high text-primary me-2"></i>Sign to Speech</h4>
+                        <p class="text-muted-dynamic small mb-3">Type a phrase to simulate a gesture translation into
+                            speech.</p><input type="text" id="signToSpeechInput" class="form-control mb-3"
+                            placeholder="Type a sign (e.g., 'Hello', 'Thank You')"><button
+                            class="btn btn-primary w-100 rounded-pill" id="readSignBtn"><i
+                                class="fas fa-play me-2"></i>Speak Sign</button>
+                        <div class="interactive-output mt-3 d-flex align-items-center justify-content-center text-center p-3"
+                            id="signToSpeechOutput"><span class="text-muted-dynamic fst-italic">Speech output will
+                                appear here...</span></div>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="interactive-card fade-in">
+                        <h4><i class="fas fa-hands text-secondary me-2"></i>Text to Sign Description</h4>
+                        <p class="text-muted-dynamic small mb-3">Ask AI to explain how to perform a sign.</p><input
+                            type="text" id="textToSignInput" class="form-control mb-3"
+                            placeholder="Type a word (e.g., 'Connect', 'Help')"><button
+                            class="btn btn-secondary w-100 rounded-pill"
+                            style="background-color: var(--secondary-color); border:none;" id="getTextSignBtn"><i
+                                class="fas fa-wand-magic-sparkles me-2"></i>Explain Sign</button>
+                        <div class="speech-to-sign-animation mt-3 d-flex align-items-center justify-content-center p-3"
+                            id="speechToSignAnimation" style="min-height: 100px;">
+                            <div class="text-center">
+                                <p class="mb-0 text-muted">Description will appear here...</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="live-interpretation" class="live-interpretation-section py-5 bg-surface">
+        <div class="container py-5">
+            <div class="row justify-content-center">
+                <div class="col-lg-8 text-center mb-4">
+                    <h2 class="section-title fade-in">Live Video Interpretation</h2>
+                    <p class="section-subtitle fade-in">Translate signs or practice your skills using our Client-Side
+                        AI.</p>
+
+                    <div class="mode-switcher fade-in">
+                        <button class="mode-btn active" id="btnTranslateMode"><i
+                                class="fas fa-language me-2"></i>Translate</button>
+                        <button class="mode-btn" id="btnPracticeMode"><i class="fas fa-graduation-cap me-2"></i>Practice
+                            Mode</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row justify-content-center">
+                <div class="col-lg-8">
+                    <div class="video-container fade-in mb-4" id="webcam-container">
+                        <div id="gameOverlay" class="game-overlay hidden">
+                            <div class="target-badge"><i class="fas fa-bullseye me-2 text-warning"></i>Show: <span
+                                    id="targetSignText" class="text-white">...</span></div>
+                            <div class="score-badge"><i class="fas fa-star me-2 text-warning"></i>Score: <span
+                                    id="scoreText">0</span></div>
+                        </div>
+
+                        <div id="confidenceOverlay" class="confidence-overlay hidden">
+                            <div class="confidence-label"><span>Confidence</span><span id="confidenceValue">0%</span>
+                            </div>
+                            <div class="progress">
+                                <div id="confidenceBar" class="progress-bar" role="progressbar" style="width: 0%"></div>
+                            </div>
+                        </div>
+
+                        <div id="feedbackPopup" class="feedback-overlay">
+                            <i class="fas fa-check-circle me-2"></i>Correct! +10
+                        </div>
+
+                        <div id="cameraStatusOverlay" class="camera-status-overlay"
+                            style="position: absolute; top:0; left:0; width:100%; height:100%; background: rgba(15, 23, 42, 0.95); display: flex; flex-direction: column; align-items: center; justify-content: center; color: white; z-index: 10;">
+                            <div class="spinner-border text-primary mb-3 hidden" id="loadingSpinner" role="status"
+                                style="width: 3rem; height: 3rem;"><span class="visually-hidden">Loading...</span></div>
+                            <p id="cameraStatusText" class="fw-bold fs-5">Ready to Connect</p>
+                        </div>
+                    </div>
+
+                    <div class="d-flex justify-content-between align-items-center gap-3 mb-4 flex-wrap">
+                        <div class="d-flex gap-2">
+                            <button class="btn btn-primary-custom" id="startInterpretationBtn"><i
+                                    class="fas fa-video me-2"></i>Start Camera</button>
+                            <button class="btn btn-danger rounded-pill px-4 py-3 fw-bold shadow-sm"
+                                id="stopInterpretationBtn" disabled><i class="fas fa-stop-circle me-2"></i>Stop</button>
+                        </div>
+
+                        <div class="d-flex gap-3 align-items-center">
+                            <div class="d-flex align-items-center">
+                                <label class="me-2 small text-muted-dynamic"><i
+                                        class="fas fa-tachometer-alt me-1"></i>Speed:</label>
+                                <input type="range" class="form-range" id="speechSpeed" min="0.5" max="1.5" step="0.1"
+                                    value="1.0" style="width: 100px;">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="interpretation-chat-container fade-in" id="chatWrapper">
+                        <div class="d-flex align-items-center justify-content-between p-3 border-bottom"
+                            style="background-color: var(--card-bg);">
+                            <div class="d-flex align-items-center">
+                                <div class="bg-light rounded-circle p-2 me-3"><i class="fas fa-robot text-primary"></i>
+                                </div>
+                                <div>
+                                    <h6 class="mb-0 fw-bold">SignoVoice AI</h6><small class="text-success"><i
+                                            class="fas fa-circle fa-xs me-1"></i>Online</small>
+                                </div>
+                            </div>
+                            <button class="btn btn-sm btn-outline-secondary rounded-pill" id="exportChatBtn"><i
+                                    class="fas fa-download me-1"></i> Save Chat</button>
+                        </div>
+                        <div class="interpretation-chat-history" id="interpretationChatHistory"
+                            style="height: 300px; overflow-y: auto;">
+                            <div class="interpretation-chat-message ai"><strong>AI:</strong> Waiting to start
+                                interpretation...</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="booking-section" class="py-5 bg-base">
+        <div class="container py-5">
+            <div class="row justify-content-center">
+                <div class="col-lg-8 text-center mb-5">
+                    <h2 class="section-title fade-in">Book a Live Interpreter</h2>
+                    <p class="section-subtitle fade-in">Schedule a live session with a certified sign language
+                        interpreter for your meeting.</p>
+                </div>
+            </div>
+            <div class="row justify-content-center">
+                <div class="col-lg-8">
+                    <div class="card p-5 shadow-lg border-0 fade-in">
+                        <form id="bookingForm">
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label fw-bold small text-muted-dynamic">FULL NAME</label>
+                                    <input type="text" class="form-control" name="name" required
+                                        placeholder="Your Name">
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label fw-bold small text-muted-dynamic">EMAIL ADDRESS</label>
+                                    <input type="email" class="form-control" name="email" required
+                                        placeholder="name@example.com">
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-4 mb-3">
+                                    <label class="form-label fw-bold small text-muted-dynamic">DATE</label>
+                                    <input type="date" class="form-control" name="date" required>
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <label class="form-label fw-bold small text-muted-dynamic">TIME</label>
+                                    <input type="time" class="form-control" name="time" required>
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <label class="form-label fw-bold small text-muted-dynamic">LANGUAGE</label>
+                                    <select class="form-select form-control" name="language" required>
+                                        <option value="ASL">ASL (American)</option>
+                                        <option value="ISL">ISL (Indian)</option>
+                                        <option value="BSL">BSL (British)</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="mb-4">
+                                <label class="form-label fw-bold small text-muted-dynamic">NOTES / CONTEXT</label>
+                                <textarea class="form-control" name="notes" rows="3"
+                                    placeholder="Briefly describe the meeting context..."></textarea>
+                            </div>
+                            <div class="d-grid">
+                                <button type="submit" class="btn btn-primary-custom btn-lg">Request Booking <i
+                                        class="fas fa-calendar-check ms-2"></i></button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="demo" class="demo-section py-5 bg-base">
+        <div class="container py-5">
+            <div class="row justify-content-center">
+                <div class="col-lg-10 text-center">
+    
+                    <h2 class="section-title fade-in mb-3">
+                        See Our Full Demo In Action
+                    </h2>
+    
+                    <p class="section-subtitle fade-in mb-5">
+                        Experience the power of SignoVoice through our full
+                        interactive scenario.
+                    </p>
+    
+                    <!-- Demo Area -->
+                    <div class="demo-video fade-in rounded-4 shadow-lg overflow-hidden position-relative bg-dark">
+    
+                        <!-- Background Image -->
+                        <div class="demo-background position-absolute w-100 h-100"></div>
+    
+                        <!-- Phone Video -->
+                        <div class="phone-frame position-relative z-2">
+    
+                            <video controls playsinline preload="metadata">
+                                <source src="sign_videos/working_app.mp4" type="video/mp4">
+                                Your browser does not support the video tag.
+                            </video>
+    
+                        </div>
+    
+                    </div>
+    
+                    <h4 class="fw-bold mt-4">
+                        Watch Full Walkthrough
+                    </h4>
+    
+                    <p class="section-subtitle">
+                        See how SignoVoice works in action.
+                    </p>
+    
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+    <section class="stats-section py-5">
+        <div class="container py-4">
+            <div class="row text-center g-4">
+                <div class="col-lg-3 col-md-6">
+                    <div class="stat-card fade-in p-3"><span class="stat-number counter" data-target="95">95%</span>
+                        <div class="stat-label text-white-50 mt-2 fs-5">Accuracy Rate</div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="stat-card fade-in p-3"><span class="stat-number counter"
+                            data-target="50000">50000+</span>
+                        <div class="stat-label text-white-50 mt-2 fs-5">Active Users</div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="stat-card fade-in p-3"><span class="stat-number counter" data-target="15">15</span>
+                        <div class="stat-label text-white-50 mt-2 fs-5">Languages</div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="stat-card fade-in p-3"><span class="stat-number counter" data-target="24">24</span>
+                        <div class="stat-label text-white-50 mt-2 fs-5">Hours Support</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="contact-form-section" class="py-5 bg-base">
+        <div class="container py-5">
+            <div class="row justify-content-center">
+                <div class="col-lg-8">
+                    <div class="text-center mb-5">
+                        <h2 class="section-title fade-in">Get in Touch</h2>
+                        <p class="section-subtitle fade-in">We'd love to hear from you!</p>
+                    </div>
+                    <div class="card p-5 shadow-lg border-0 fade-in">
+                        <form id="contactForm">
+                            <div class="row">
+                                <div class="col-md-6 mb-3"><label for="name"
+                                        class="form-label fw-bold small text-muted-dynamic">NAME</label><input
+                                        type="text" class="form-control" id="name" name="name" placeholder="John Doe"
+                                        required></div>
+                                <div class="col-md-6 mb-3"><label for="email"
+                                        class="form-label fw-bold small text-muted-dynamic">EMAIL</label><input
+                                        type="email" class="form-control" id="email" name="email"
+                                        placeholder="name@company.com" required></div>
+                            </div>
+                            <div class="mb-3"><label for="subject"
+                                    class="form-label fw-bold small text-muted-dynamic">SUBJECT</label><input
+                                    type="text" class="form-control" id="subject" name="subject"
+                                    placeholder="How can we help?"></div>
+                            <div class="mb-4"><label for="message"
+                                    class="form-label fw-bold small text-muted-dynamic">MESSAGE</label><textarea
+                                    class="form-control" id="message" name="message" rows="5"
+                                    placeholder="Tell us about your project..." required></textarea></div>
+                            <div class="d-grid"><button type="submit" class="btn btn-primary-custom btn-lg">Send Message
+                                    <i class="fas fa-paper-plane ms-2"></i></button></div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer id="contact" class="footer">
+        <div class="container">
+            <div class="row g-5">
+                <div class="col-lg-4">
+                    <h5 class="mb-4 text-white fw-bold"><i
+                            class="fas fa-hands-asl-interpreting me-2 text-primary"></i>SignoVoice</h5>
+                    <p class="text-white-50">Breaking communication barriers.</p>
+                </div>
+                <div class="col-lg-4 text-md-end">
+                    <p class="text-white-50">© <span id="currentYear"></span> SignoVoice. All rights reserved.</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        /* ==========================================
+           GLOBAL VARIABLES & CONFIGURATION
+        ========================================== */
+        const ONNX_API = "/ai/predict";
+
+        // Available sign classes (update this list based on your backend model)
+        const classLabels =
+            ['A', 'B', 'C', 'Hello', 'Thanks', 'I Love You', 'Yes', 'No','Please'];
+        let videoStream = null;
+        let videoElement = null;
+        let inferenceInterval = null;
+        let currentMode = 'translate'; // 'translate' or 'practice'
+
+        // --- TRANSLATE MODE VARS ---
+        let lastPrediction = "";
+        let lastSpeakTime = 0;
+
+        // --- PRACTICE MODE VARS ---
+        let score = 0;
+        let targetSign = "";
+        let isCorrectPending = false;
+        let consecutiveCorrect = 0;
+
+        // --- UI REFERENCES ---
+        const startBtn = document.getElementById('startInterpretationBtn');
+        const stopBtn = document.getElementById('stopInterpretationBtn');
+        const webcamContainer = document.getElementById('webcam-container');
+
+        const overlay = document.getElementById('cameraStatusOverlay');
+        const statusText = document.getElementById('cameraStatusText');
+        const spinner = document.getElementById('loadingSpinner');
+
+        const confidenceOverlay = document.getElementById('confidenceOverlay');
+        const confidenceBar = document.getElementById('confidenceBar');
+        const confidenceValue = document.getElementById('confidenceValue');
+
+        // Mode Switcher UI
+        const btnTranslate = document.getElementById('btnTranslateMode');
+        const btnPractice = document.getElementById('btnPracticeMode');
+        const chatWrapper = document.getElementById('chatWrapper');
+        const chatBox = document.getElementById('interpretationChatHistory');
+        const gameOverlay = document.getElementById('gameOverlay');
+        const targetSignText = document.getElementById('targetSignText');
+        const scoreText = document.getElementById('scoreText');
+        const feedbackPopup = document.getElementById('feedbackPopup');
+        const speedInput = document.getElementById('speechSpeed');
+        const exportBtn = document.getElementById('exportChatBtn');
+
+        /* ==========================================
+           CAMERA & INFERENCE LOGIC
+        ========================================== */
+
+        async function startCamera() {
+            startBtn.disabled = true;
+            stopBtn.disabled = false;
+
+            // UI Update
+            statusText.innerText = "Initializing Camera...";
+            spinner.classList.remove('hidden');
+
+            try {
+                videoElement = document.createElement("video");
+                videoElement.autoplay = true;
+                videoElement.playsInline = true;
+
+                // Request camera access
+                videoStream = await navigator.mediaDevices.getUserMedia({ video: true });
+                videoElement.srcObject = videoStream;
+
+                // Wait for video metadata to load
+                await new Promise((resolve) => {
+                    videoElement.onloadedmetadata = () => resolve();
+                });
+
+                // Setup Canvas
+                const canvas = document.createElement("canvas");
+                canvas.width = 640;
+                canvas.height = 480;
+                webcamContainer.innerHTML = '';
+                webcamContainer.appendChild(canvas);
+                webcamContainer.appendChild(gameOverlay);
+                webcamContainer.appendChild(confidenceOverlay);
+                webcamContainer.appendChild(feedbackPopup);
+                webcamContainer.appendChild(overlay);
+
+                const ctx = canvas.getContext("2d");
+
+                // Hide Loading Overlay
+                overlay.classList.add('hidden');
+                confidenceOverlay.classList.remove('hidden');
+
+                // Add initial message
+                if (currentMode === 'translate') {
+                    addChatMessage("Camera started. Begin signing!", "ai");
+                }
+
+                // Start Inference Loop
+                inferenceInterval = setInterval(async () => {
+                    ctx.drawImage(videoElement, 0, 0, canvas.width, canvas.height);
+
+                    canvas.toBlob(async (blob) => {
+                        if (!blob) return;
+
+                        const formData = new FormData();
+                        formData.append("file", blob, "frame.jpg");
+
+                        try {
+                            const res = await fetch("/ai/predict", {
+                                method: "POST",
+                                body: formData
+                            });
+
+                            if (!res.ok) throw new Error("Backend error");
+
+                            const data = await res.json();
+                            updateUI(data.prediction, data.confidence);
+
+                        } catch (err) {
+                            console.warn("AI backend unavailable", err);
+                        }
+                    }, "image/jpeg", 0.7);
+
+                }, 300);
+
+            } catch (err) {
+                console.error("Camera error:", err);
+                statusText.innerText = "Error accessing camera: " + err.message;
+                spinner.classList.add('hidden');
+                startBtn.disabled = false;
+                stopBtn.disabled = true;
+            }
+        }
+
+        function stopCamera() {
+            clearInterval(inferenceInterval);
+
+            if (videoStream) {
+                videoStream.getTracks().forEach(track => track.stop());
+            }
+
+            const canvas = webcamContainer.querySelector("canvas");
+            if (canvas) canvas.remove();
+
+            startBtn.disabled = false;
+            stopBtn.disabled = true;
+
+            // Reset UI
+            overlay.classList.remove('hidden');
+            confidenceOverlay.classList.add('hidden');
+            statusText.textContent = "Ready to Connect";
+            spinner.classList.add('hidden');
+            
+            if (currentMode === 'translate') {
+                addChatMessage("Session ended.", "ai");
+            }
+            
+            lastPrediction = "";
+        }
+
+        function updateUI(label, confidence) {
+            // Filter out non-actionable predictions
+            const ignoreLabels = ["Waiting", "Loading", "Idle", "Uncertain", "Nothing", "Background"];
+            if (ignoreLabels.includes(label)) {
+                return;
+            }
+
+            const percent = Math.round(confidence * 100);
+            confidenceBar.style.width = percent + "%";
+            confidenceValue.innerText = percent + "%";
+
+            // Only act if confidence is high enough
+            if (percent > 75) {
+                if (currentMode === 'translate') {
+                    handleTranslateResult(label);
+                } else {
+                    handlePracticeResult(label);
+                }
+            }
+        }
+
+        /* ==========================================
+           MODE LOGIC (TRANSLATE VS PRACTICE)
+        ========================================== */
+
+        function setMode(mode) {
+            currentMode = mode;
+            
+            // Reset any ongoing sessions
+            if (videoStream) {
+                stopCamera();
+            }
+
+            if (mode === 'translate') {
+                btnTranslate.classList.add('active');
+                btnPractice.classList.remove('active');
+                chatWrapper.classList.remove('hidden');
+                gameOverlay.classList.add('hidden');
+                addChatMessage('Switched to Translation Mode. Start camera to begin.', 'ai');
+            } else {
+                btnPractice.classList.add('active');
+                btnTranslate.classList.remove('active');
+                chatWrapper.classList.add('hidden');
+                gameOverlay.classList.remove('hidden');
+
+                // Initialize Practice Game
+                score = 0;
+                scoreText.textContent = score;
+                pickNewTarget();
+            }
+        }
+
+        // --- TRANSLATE MODE ---
+        function handleTranslateResult(label) {
+            // Debounce logic: don't repeat the same word immediately
+            const now = Date.now();
+            if (now - lastSpeakTime > 2000 || label !== lastPrediction) {
+                addChatMessage(label, 'ai');
+                speak(label);
+                lastPrediction = label;
+                lastSpeakTime = now;
+            }
+        }
+
+        // --- PRACTICE MODE ---
+        function pickNewTarget() {
+            const randomIndex = Math.floor(Math.random() * classLabels.length);
+            targetSign = classLabels[randomIndex];
+            targetSignText.textContent = targetSign;
+            isCorrectPending = false;
+            
+            console.log("New target sign:", targetSign);
+        }
+
+        function handlePracticeResult(label) {
+            if (isCorrectPending) return;
+
+            console.log("Practice Mode - Detected:", label, "Target:", targetSign);
+
+            // Normalize strings for comparison (case insensitive)
+            if (label.toLowerCase().trim() === targetSign.toLowerCase().trim()) {
+                isCorrectPending = true;
+                score += 10;
+                consecutiveCorrect++;
+                scoreText.textContent = score;
+
+                // Show feedback
+                feedbackPopup.innerHTML = `<i class="fas fa-check-circle me-2"></i>Correct! +10`;
+                feedbackPopup.classList.add('show');
+                speak("Correct!");
+
+                // Bonus for streaks
+                if (consecutiveCorrect > 0 && consecutiveCorrect % 5 === 0) {
+                    setTimeout(() => {
+                        speak("Great streak!");
+                    }, 800);
+                }
+
+                setTimeout(() => {
+                    feedbackPopup.classList.remove('show');
+                    pickNewTarget();
+                }, 1500);
+            }
+        }
+
+        /* ==========================================
+           HELPER FUNCTIONS
+        ========================================== */
+
+        function speak(text) {
+            if ('speechSynthesis' in window) {
+                const u = new SpeechSynthesisUtterance(text);
+                u.rate = parseFloat(speedInput.value);
+                u.lang = 'en-US';
+                window.speechSynthesis.speak(u);
+            }
+        }
+
+        function addChatMessage(text, sender) {
+            const div = document.createElement('div');
+            div.className = `interpretation-chat-message ${sender}`;
+            div.innerHTML = sender === 'ai' ? `<strong>AI:</strong> ${text}` : text;
+            chatBox.appendChild(div);
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
+
+        // --- INTERACTIVE DEMO (SIMULATION) ---
+        const signToSpeechInput = document.getElementById('signToSpeechInput');
+        const readSignBtn = document.getElementById('readSignBtn');
+        const signToSpeechOutput = document.getElementById('signToSpeechOutput');
+
+        readSignBtn.addEventListener('click', () => {
+            const text = signToSpeechInput.value.trim();
+            if (text) {
+                signToSpeechOutput.classList.add('speaking');
+                signToSpeechOutput.innerHTML = `<strong>Speaking:</strong> "${text}"`;
+                speak(text);
+                setTimeout(() => signToSpeechOutput.classList.remove('speaking'), 2000);
+            }
+        });
+
+        // --- TEXT TO SIGN (API/MOCK) ---
+        const getTextSignBtn = document.getElementById('getTextSignBtn');
+        const textToSignInput = document.getElementById('textToSignInput');
+        const speechToSignAnimation = document.getElementById('speechToSignAnimation');
+
+        if (getTextSignBtn) {
+            getTextSignBtn.addEventListener('click', async () => {
+                const text = textToSignInput.value.trim();
+                if (!text) return;
+
+                speechToSignAnimation.innerHTML = '<div class="spinner-border text-primary"></div><p class="mt-2">Asking AI...</p>';
+
+                try {
+                    const response = await fetch('/text-to-sign', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ text: text })
+                    });
+
+                    if (!response.ok) throw new Error("Endpoint missing");
+
+                    const data = await response.json();
+                    if (data.success) {
+                        speechToSignAnimation.innerHTML = `<div class="p-3 text-start"><small class="text-muted fw-bold">INSTRUCTIONS:</small><p>${data.description}</p></div>`;
+                    }
+                } catch (e) {
+                    // Fallback Simulation
+                    setTimeout(() => {
+                        const mockDescriptions = {
+                            "hello": "Raise your hand to your forehead and move it forward in a salute motion.",
+                            "thanks": "Touch your chin with your fingertips and move your hand forward and down.",
+                            "help": "Place your closed fist (thumbs up) on your opposite open palm and raise both hands together.",
+                            "default": `Form the sign for '${text}' by following standard ASL/ISL conventions. (Backend unavailable - showing demo description)`
+                        };
+                        const description = mockDescriptions[text.toLowerCase()] || mockDescriptions["default"];
+                        speechToSignAnimation.innerHTML = `<div class="p-3 text-start"><small class="text-muted fw-bold">DEMO RESULT:</small><p>${description}</p></div>`;
+                    }, 1000);
+                }
+            });
+        }
+
+        /* ==========================================
+           EVENT LISTENERS
+        ========================================== */
+        startBtn.addEventListener('click', startCamera);
+        stopBtn.addEventListener('click', stopCamera);
+        btnTranslate.addEventListener('click', () => setMode('translate'));
+        btnPractice.addEventListener('click', () => setMode('practice'));
+
+        // Export Chat
+        exportBtn.addEventListener('click', () => {
+            const messages = Array.from(document.querySelectorAll('.interpretation-chat-message')).map(div => {
+                return div.innerText.replace("AI:", "SignoVoice: ");
+            }).join('\n');
+            const blob = new Blob([messages], { type: 'text/plain' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `SignoVoice_Transcript_${new Date().toISOString().split('T')[0]}.txt`;
+            a.click();
+        });
+
+        // Set Copyright Year
+        document.getElementById('currentYear').textContent = new Date().getFullYear();
+
+        // Contact Form Logic
+        const contactForm = document.getElementById('contactForm');
+        if (contactForm) {
+            contactForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const submitBtn = contactForm.querySelector('button[type="submit"]');
+                const originalText = submitBtn.innerHTML;
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Sending...';
+
+                setTimeout(() => {
+                    showPlaceholderModal('Success!', 'Your message has been sent successfully (Demo Mode).');
+                    contactForm.reset();
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = originalText;
+                }, 1500);
+            });
+        }
+
+        // Booking Form Logic
+        const bookingForm = document.getElementById('bookingForm');
+        if (bookingForm) {
+            bookingForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const submitBtn = bookingForm.querySelector('button[type="submit"]');
+                const originalText = submitBtn.innerHTML;
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Booking...';
+
+                const formData = new FormData(bookingForm);
+                const payload = Object.fromEntries(formData.entries());
+
+                try {
+                    const res = await fetch('/schedule-meeting', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+                    const data = await res.json();
+
+                    if (data.success) {
+                        showPlaceholderModal('Booking Request Sent', 'We have received your request. An interpreter will confirm shortly via email.');
+                        bookingForm.reset();
+                    } else {
+                        showPlaceholderModal('Error', data.message || 'Something went wrong.');
+                    }
+                } catch (err) {
+                    showPlaceholderModal('Demo Mode', 'Booking functionality requires backend integration. Request saved locally for demo purposes.');
+                    bookingForm.reset();
+                } finally {
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = originalText;
+                }
+            });
+        }
+
+        function showPlaceholderModal(title, body) {
+            const modalElement = document.getElementById('placeholderModal');
+            document.getElementById('modalTitle').textContent = title;
+            document.getElementById('modalBody').innerHTML = body;
+            new bootstrap.Modal(modalElement).show();
+        }
+
+        // Scroll Effect
+        window.addEventListener('scroll', function () {
+            const navbar = document.querySelector('.navbar');
+            if (window.scrollY > 50) navbar.classList.add('scrolled');
+            else navbar.classList.remove('scrolled');
+        });
+
+        // Intersection Observer for Animations
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => { if (entry.isIntersecting) entry.target.classList.add('visible'); });
+        }, { threshold: 0.1 });
+        document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+
+        // Button click handlers for demo
+        document.getElementById('downloadNowBtn')?.addEventListener('click', () => {
+            showPlaceholderModal('Download App', 'The SignoVoice mobile app will be available soon on iOS and Android!');
+        });
+
+        document.getElementById('watchDemoBtn')?.addEventListener('click', () => {
+            document.getElementById('live-interpretation')?.scrollIntoView({ behavior: 'smooth' });
+        });
+    </script>
+</body>
+
+</html>
